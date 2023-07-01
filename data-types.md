@@ -404,3 +404,243 @@ VALUES
 -- Retrieve bit string data from the table
 SELECT * FROM flags;
 ```
+
+## Text Search Types
+
+PostgreSQL provides two data types for text search: `tsvector` and `tsquery`. Here's a brief description of each type:
+
+| Data Type  | Description                                             |
+|------------|---------------------------------------------------------|
+| `tsvector` | Stores a document or text search index                   |
+| `tsquery`  | Represents a search query or search condition            |
+
+The `tsvector` type is used to store a document or text search index. It represents a parsed and transformed version of the document, with individual words and their positions.
+
+The `tsquery` type is used to represent a search query or search condition. It allows you to specify search terms, Boolean operators, and other search operators for performing complex text searches.
+
+The text search types enable powerful full-text search capabilities in PostgreSQL. They support features such as stemming, ranking, phrase searching, and more. You can perform efficient text search queries and match documents based on relevance to the search query.
+
+For more information and usage details, refer to the [PostgreSQL Full Text Search Documentation](https://www.postgresql.org/docs/current/textsearch.html).
+
+Example:
+```sql
+-- Create a table to store documents
+CREATE TABLE documents (
+    id SERIAL PRIMARY KEY,
+    document_title VARCHAR(100),
+    document_content TEXT,
+    document_search_index TSVECTOR
+);
+
+-- Create a text search index on the document_content column
+CREATE INDEX idx_document_search ON documents USING gin(document_search_index);
+
+-- Insert documents into the table
+INSERT INTO documents (document_title, document_content, document_search_index)
+VALUES
+    ('Document 1', 'This is the content of document 1', to_tsvector('english', 'This is the content of document 1')),
+    ('Document 2', 'This is the content of document 2', to_tsvector('english', 'This is the content of document 2'));
+
+-- Perform a text search query
+SELECT * FROM documents WHERE document_search_index @@ to_tsquery('english', 'content');
+
+-- Update the text search index for new documents
+UPDATE documents SET document_search_index = to_tsvector('english', document_content) WHERE id > 2;
+```
+
+## UUID Type 
+
+PostgreSQL provides a data type called `uuid` for storing universally unique identifiers (UUIDs). Here's a brief description of the type:
+
+| Data Type | Description                               |
+|-----------|-------------------------------------------|
+| `uuid`    | Stores a 128-bit universally unique identifier |
+
+A UUID is a 128-bit value that is unique across all space and time. It is typically represented as a sequence of 32 hexadecimal digits separated by hyphens. For example, `550e8400-e29b-41d4-a716-446655440000`.
+
+The `uuid` type in PostgreSQL allows you to store and manipulate UUID values. It provides efficient storage and indexing, making it suitable for primary keys, unique identifiers, or when you need to ensure global uniqueness of an entity.
+
+To generate UUID values, you can use functions such as `uuid_generate_v4()` or libraries in your programming language of choice.
+
+For more information and usage details, refer to the [PostgreSQL UUID Type Documentation](https://www.postgresql.org/docs/current/datatype-uuid.html).
+
+
+```sql
+-- Create a table to store data with UUID
+CREATE TABLE users (
+    id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+    username VARCHAR(100),
+    email VARCHAR(100)
+);
+
+-- Insert data with UUID into the table
+INSERT INTO users (username, email)
+VALUES
+    ('fahim', 'fahim@example.com'),
+    ('firoz', 'firoz@example.com');
+
+-- Retrieve data from the table
+SELECT * FROM users;
+```
+
+## XML Type
+
+PostgreSQL provides a data type called `xml` for storing XML (eXtensible Markup Language) data. Here's a brief description of the type:
+
+| Data Type | Description                              |
+|-----------|------------------------------------------|
+| `xml`     | Stores XML documents or fragments of XML |
+
+The `xml` data type in PostgreSQL allows you to store XML documents or fragments of XML. XML is a popular standard for representing structured data, and it is widely used in various applications and industries.
+
+The `xml` data type supports storing well-formed XML documents, which can be queried, searched, and manipulated using various XML functions and operators provided by PostgreSQL.
+
+You can insert XML data into a table, retrieve XML data, perform XML-specific queries, and extract information from XML documents using XPath expressions or XML-specific functions.
+
+For more information and usage details, refer to the [PostgreSQL XML Type Documentation](https://www.postgresql.org/docs/current/datatype-xml.html).
+
+Example:
+```sql
+-- Create a table to store XML data
+CREATE TABLE books (
+    id SERIAL PRIMARY KEY,
+    title VARCHAR(100),
+    author VARCHAR(100),
+    content XML
+);
+
+-- Insert XML data into the table
+INSERT INTO books (title, author, content)
+VALUES
+    ('Book 1', 'Author 1', '<book><chapter>Chapter 1</chapter><chapter>Chapter 2</chapter></book>'),
+    ('Book 2', 'Author 2', '<book><chapter>Chapter 3</chapter><chapter>Chapter 4</chapter></book>');
+
+-- Retrieve XML data from the table
+SELECT * FROM books;
+
+-- Extract information from XML using XPath
+SELECT xpath('/book/chapter', content) AS chapters FROM books WHERE id = 1;
+```
+
+## JSON Type
+
+PostgreSQL provides a data type called `json` for storing JSON (JavaScript Object Notation) data. Here's a brief description of the type:
+
+| Data Type | Description                       |
+|-----------|-----------------------------------|
+| `json`    | Stores JSON data                  |
+
+The `json` data type in PostgreSQL allows you to store JSON documents or JSON-formatted data. JSON is a widely used data interchange format that is human-readable and easy to parse.
+
+With the `json` data type, you can store JSON objects, arrays, or scalar values within a single column of a table. PostgreSQL provides various functions and operators for working with JSON data, allowing you to query, extract, modify, and aggregate JSON values.
+
+You can insert JSON data into a table, retrieve JSON data, perform JSON-specific queries using the JSON operators, and navigate the JSON structure using the JSON functions provided by PostgreSQL.
+
+For more information and usage details, refer to the [PostgreSQL JSON Type Documentation](https://www.postgresql.org/docs/current/datatype-json.html).
+
+Example:
+```sql
+-- Create a table to store JSON data
+CREATE TABLE employees (
+    id SERIAL PRIMARY KEY,
+    name VARCHAR(100),
+    contact JSON
+);
+
+-- Insert JSON data into the table
+INSERT INTO employees (name, contact)
+VALUES
+    ('John Doe', '{"email": "john.doe@example.com", "phone": "123-456-7890"}'),
+    ('Jane Smith', '{"email": "jane.smith@example.com", "phone": "987-654-3210"}');
+
+-- Retrieve JSON data from the table
+SELECT * FROM employees;
+
+-- Query JSON data using JSON operators
+SELECT * FROM employees WHERE contact ->> 'email' = 'john.doe@example.com';
+```
+
+## Array Type
+
+PostgreSQL provides a data type called `array` for storing arrays of values. Here's a brief description of the type:
+
+| Data Type | Description                        |
+|-----------|------------------------------------|
+| `array`   | Stores arrays of values             |
+
+The `array` data type in PostgreSQL allows you to store multiple values of the same data type within a single column. Arrays can be used to store simple types such as integers, strings, or complex types like JSON objects or custom composite types.
+
+PostgreSQL provides various functions and operators for working with arrays, allowing you to query, manipulate, and aggregate array values. You can perform operations such as array concatenation, element access, array length, and array containment checks.
+
+To define an array column, you specify the base data type followed by `[]`. For example, `integer[]` represents an array of integers.
+
+Arrays can have multiple dimensions, allowing you to create multi-dimensional arrays or arrays of arrays.
+
+For more information and usage details, refer to the [PostgreSQL Array Type Documentation](https://www.postgresql.org/docs/current/arrays.html).
+
+
+Example:
+```sql
+-- Create a table to store array data
+CREATE TABLE students (
+    id SERIAL PRIMARY KEY,
+    name VARCHAR(100),
+    grades INTEGER[]
+);
+
+-- Insert array data into the table
+INSERT INTO students (name, grades)
+VALUES
+    ('John Doe', ARRAY[85, 92, 78]),
+    ('Jane Smith', ARRAY[90, 88, 95]);
+
+-- Retrieve array data from the table
+SELECT * FROM students;
+
+-- Query array data using array operators
+SELECT * FROM students WHERE 90 = ANY(grades);
+```
+
+## Composite Type
+
+PostgreSQL allows you to define custom composite types, also known as row types. Here's a brief description of the type:
+
+| Data Type         | Description                         |
+|-------------------|-------------------------------------|
+| Composite Type    | User-defined custom data structure   |
+
+The composite type in PostgreSQL allows you to define a custom data structure composed of multiple fields. It is useful when you want to group related data fields together and manipulate them as a single unit.
+
+To create a composite type, you define its structure by specifying the name and data types of each field. Once defined, you can use the composite type to create tables, define function parameters, or return values from functions.
+
+Composite types can contain fields of any data type, including built-in types, user-defined types, or even other composite types. This flexibility allows you to create complex data structures that match your specific needs.
+
+When working with composite types, you can access individual fields using dot notation (e.g., `composite_field.field_name`) or use the composite type as a whole in queries or assignments.
+
+For more information and usage details, refer to the [PostgreSQL Composite Type Documentation](https://www.postgresql.org/docs/current/rowtypes.html).
+
+```sql
+-- Create a composite type
+CREATE TYPE person_type AS (
+    first_name VARCHAR(50),
+    last_name VARCHAR(50),
+    age INTEGER
+);
+
+-- Create a table using the composite type
+CREATE TABLE employees (
+    id SERIAL PRIMARY KEY,
+    person person_type,
+    department VARCHAR(50)
+);
+
+-- Insert data into the table
+INSERT INTO employees (person, department)
+VALUES
+    (ROW('John', 'Doe', 30), 'Engineering'),
+    (ROW('Jane', 'Smith', 35), 'Sales');
+
+-- Retrieve data from the table
+SELECT id, (person).first_name, (person).last_name, (person).age, department
+FROM employees;
+```
