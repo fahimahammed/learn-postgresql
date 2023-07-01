@@ -47,3 +47,5 @@
 3. Once the installation is complete, PostgreSQL should be up and running. Refer to the documentation for your specific Linux distribution on how to start or enable the PostgreSQL service.
 
 4. Optionally, you can secure your PostgreSQL installation by setting a password for the database superuser account (`postgres`).
+
+---
