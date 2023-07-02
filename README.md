@@ -11,6 +11,7 @@ This repository provides a guide to learn PostgreSQL, an open-source relational 
 - [Database Operations](psql/database.md)
 - [Table & Schemas](psql/table-schema.md)
 - [Querying Data](psql/query.md)
+- [Clauses](psql/clauses.md)
 - [Contributing](#contributing)
 - [License](#license)
 - [Declaration](#declaration)
