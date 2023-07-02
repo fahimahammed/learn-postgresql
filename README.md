@@ -9,6 +9,7 @@ This repository provides a guide to learn PostgreSQL, an open-source relational 
 - [Installation](installation.md)
 - [Data Types](data-types.md)
 - [Database Operations](database.md)
+- [Table & Schemas](table-schema.md)
 - [Contributing](#contributing)
 - [License](#license)
 
