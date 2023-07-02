@@ -644,3 +644,164 @@ VALUES
 SELECT id, (person).first_name, (person).last_name, (person).age, department
 FROM employees;
 ```
+
+## Range Type
+
+PostgreSQL provides a data type called `range` for representing and manipulating ranges of values. Here's a brief description of the type:
+
+| Data Type | Description                       |
+|-----------|-----------------------------------|
+| `range`   | Represents a range of values      |
+
+The `range` data type in PostgreSQL allows you to store and work with ranges of values. It is useful when you need to represent continuous or discrete ranges such as time intervals, numeric ranges, or date ranges.
+
+Ranges can be defined for various built-in data types, including numeric, date, time, timestamp, and custom types. PostgreSQL provides a rich set of functions and operators for working with range values, allowing you to perform operations like range containment checks, overlaps, intersections, and merging.
+
+To define a range column, you specify the base data type followed by the keyword `range`. For example, `int4range` represents a range of integers.
+
+Ranges can be inclusive or exclusive, and they can have lower and upper bounds specified. You can also create unbounded ranges that include all possible values of a particular data type.
+
+For more information and usage details, refer to the [PostgreSQL Range Type Documentation](https://www.postgresql.org/docs/current/rangetypes.html).
+
+
+Example:
+```sql
+-- Create a table with a range column
+CREATE TABLE temperature_readings (
+    id SERIAL PRIMARY KEY,
+    reading_range int4range
+);
+
+-- Insert range values into the table
+INSERT INTO temperature_readings (reading_range)
+VALUES
+    ('[0, 10)'),        -- Range from 0 (inclusive) to 10 (exclusive)
+    ('(20, 30]'),       -- Range from 20 (exclusive) to 30 (inclusive)
+    ('[15, 25]');       -- Range from 15 (inclusive) to 25 (inclusive)
+
+-- Retrieve data from the table
+SELECT * FROM temperature_readings;
+
+-- Query data using range operators
+SELECT * FROM temperature_readings
+WHERE reading_range @> 5;  -- Check if range contains the value 5
+```
+
+## Object Identifier Type
+
+PostgreSQL provides a data type called `oid` for storing object identifiers. Here's a brief description of the type:
+
+| Data Type | Description                       |
+|-----------|-----------------------------------|
+| `oid`     | Represents object identifiers     |
+
+The `oid` data type in PostgreSQL is an internal data type used to store unique identifiers for database objects. It is primarily used by the PostgreSQL system itself to manage and reference various system objects, such as tables, indexes, functions, and more.
+
+Object identifiers (`oid`) are automatically assigned by the PostgreSQL system when creating database objects. They provide a way to uniquely identify and reference these objects within the database.
+
+While object identifiers (`oid`) are primarily used by the system, they can also be used in certain cases where you need to interact with or reference system objects directly. However, it's important to note that direct usage of `oid` types in application code is generally discouraged.
+
+For more information and usage details, refer to the [PostgreSQL Object Identifier Type Documentation](https://www.postgresql.org/docs/current/datatype-oid.html).
+
+
+Example:
+```sql
+-- Create a table with an oid column
+CREATE TABLE image_gallery (
+    id SERIAL PRIMARY KEY,
+    image_name VARCHAR(100),
+    image_oid OID
+);
+
+-- Insert data into the table
+INSERT INTO image_gallery (image_name, image_oid)
+VALUES
+    ('image1.jpg', lo_import('/path/to/image1.jpg')),
+    ('image2.jpg', lo_import('/path/to/image2.jpg'));
+
+-- Retrieve data from the table
+SELECT * FROM image_gallery;
+
+-- Retrieve image by oid
+SELECT lo_export(image_oid, '/path/to/exported_image.jpg')
+FROM image_gallery
+WHERE image_name = 'image1.jpg';
+```
+
+## Pseudo Types 
+
+PostgreSQL provides a set of pseudo types that represent specific concepts or behaviors within SQL queries or function definitions. Here's a list of some commonly used pseudo types:
+
+| Pseudo Type   | Description                                          |
+|---------------|------------------------------------------------------|
+| `void`        | Represents a function that returns no value           |
+| `record`      | Represents a row or record with a variable structure  |
+| `any`         | Represents any data type                             |
+| `anyelement`  | Represents any data type                             |
+| `trigger`     | Represents a trigger function's argument structure    |
+
+Pseudo types in PostgreSQL allow for flexibility and generic behavior in various scenarios. Here's a brief description of each pseudo type:
+
+- `void`: Represents a function that doesn't return any value. It is typically used for functions that perform actions but don't need to return a result.
+- `record`: Represents a row or record with a variable structure. It can be used to store or manipulate data from multiple tables dynamically.
+- `any` and `anyelement`: Represent any data type. They are often used in function or query definitions where the input or return type can be of any data type.
+- `trigger`: Represents the argument structure of a trigger function. It allows access to the OLD and NEW row values during trigger execution.
+
+Pseudo types provide flexibility and convenience when working with dynamic data structures, generic functions, or triggers in PostgreSQL.
+
+For more information and usage details on each pseudo type, refer to the [PostgreSQL Pseudo Types Documentation](https://www.postgresql.org/docs/current/datatype-pseudo.html).
+
+
+Example:
+```sql
+-- Create a function that returns void
+CREATE FUNCTION log_message(message text) RETURNS void AS $$
+BEGIN
+    -- Log the message to the console
+    RAISE NOTICE '%', message;
+END;
+$$ LANGUAGE plpgsql;
+
+-- Call the function that returns void
+SELECT log_message('This is a log message');
+
+-- Create a function that accepts a record as a parameter
+CREATE FUNCTION get_employee_details(employee_id INT) RETURNS record AS $$
+DECLARE
+    employee RECORD;
+BEGIN
+    -- Retrieve employee details from the employees table
+    SELECT * INTO employee FROM employees WHERE id = employee_id;
+    RETURN employee;
+END;
+$$ LANGUAGE plpgsql;
+
+-- Call the function that accepts a record as a parameter
+SELECT * FROM get_employee_details(1);
+
+-- Create a function that accepts any data type as a parameter
+CREATE FUNCTION print_data(data any) RETURNS void AS $$
+BEGIN
+    -- Print the input value
+    RAISE NOTICE '%', data;
+END;
+$$ LANGUAGE plpgsql;
+
+-- Call the function that accepts any data type as a parameter
+SELECT print_data(123);
+SELECT print_data('Hello, World!');
+
+-- Create a trigger function that uses the trigger pseudo type
+CREATE FUNCTION log_changes() RETURNS trigger AS $$
+BEGIN
+    -- Log the old and new values of the updated row
+    RAISE NOTICE 'Old values: %', OLD;
+    RAISE NOTICE 'New values: %', NEW;
+    RETURN NEW;
+END;
+$$ LANGUAGE plpgsql;
+
+-- Create a trigger on the employees table
+CREATE TRIGGER employee_changes AFTER UPDATE ON employees
+FOR EACH ROW EXECUTE FUNCTION log_changes();
+```
