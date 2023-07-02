@@ -13,6 +13,7 @@ This repository provides a guide to learn PostgreSQL, an open-source relational 
 - [Querying Data](query.md)
 - [Contributing](#contributing)
 - [License](#license)
+- [Declaration](#declaration)
 
 ## Introduction
 PostgreSQL, also known as Postgres, has been in development since 1989 and has gained widespread popularity due to its powerful features and ability to handle high workloads. It offers advanced functionality such as multi-version concurrency control, triggers, foreign keys, and stored procedures, making it suitable for a wide range of applications. PostgreSQL is renowned for its compliance with ACID properties, ensuring data reliability and consistency in transactions.
@@ -36,3 +37,6 @@ Contributions to this repository are welcome. If you find any errors or have sug
 ## License
 
 This repository is licensed under the [MIT License](LICENSE). You are free to use, modify, and distribute the content in accordance with the terms and conditions of the license.
+
+## Declaration
+[Document Created with Assistance from ChatGPT, Google Bard, and Internet](declaration.md)
