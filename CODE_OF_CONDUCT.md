@@ -2,7 +2,7 @@
 
 ### Our Pledge
 
-We, as contributors and maintainers, pledge to make participation in **DevUI** a **welcoming, inclusive, and respectful** experience for everyone, regardless of experience level, gender, sexual orientation, disability, ethnicity, religion, or personal background.
+We, as contributors and maintainers, pledge to make participation in **learn-postgresql** a **welcoming, inclusive, and respectful** experience for everyone, regardless of experience level, gender, sexual orientation, disability, ethnicity, religion, or personal background.
 
 ### Our Standards
 
