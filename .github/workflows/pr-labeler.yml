@@ -1,0 +1,22 @@
+name: "PR Labeler for Hacktoberfest"
+
+on:
+  pull_request:
+    types: [opened, reopened, synchronize]
+
+jobs:
+  add-labels:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      - name: Label PR for Hacktoberfest
+        uses: actions-ecosystem/action-add-labels@v1
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          labels: |
+            good first issue
+            hacktoberfest
+            hacktoberfest_2025
+            hacktoberfest-accepted
