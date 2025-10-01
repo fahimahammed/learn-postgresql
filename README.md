@@ -14,6 +14,7 @@ Welcome to the **Learn PostgreSQL** repository! This guide provides comprehensiv
 - [Querying Data](psql/query.md)
 - [SQL Clauses](psql/clauses.md)
 - [Advanced Concepts](psql/advance.md)
+- [Functions & Procedures](psql/functions.md)
 - [Contributing](#contributing)
 - [License](#license)
 - [Acknowledgements](#acknowledgements)
