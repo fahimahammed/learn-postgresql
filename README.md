@@ -1,4 +1,3 @@
-
 # Learn PostgreSQL
 
 Welcome to the **Learn PostgreSQL** repository! This guide provides comprehensive resources to help you understand and master **PostgreSQL**, a powerful open-source relational database management system known for its reliability, scalability, and extensive feature set. PostgreSQL supports a wide variety of data types and offers advanced functionality that makes it suitable for high-performance, data-intensive applications.
@@ -17,16 +16,16 @@ Welcome to the **Learn PostgreSQL** repository! This guide provides comprehensiv
   - [SQL Clauses](psql/clauses.md)
   - [Advanced Concepts](psql/advance.md)
   - [Functions & Procedures](psql/functions.md)
-  - [ Practice & Examples](#-practice--examples)
-  - [ Contributing](#contributing)
-  - [License](#license)
-  - [Acknowledgements](#acknowledgements)
+- [💪 Practice & Examples](#-practice--examples)
+- [Contributing](#contributing)
+- [License](#license)
+- [Acknowledgements](#acknowledgements)
 
 ## Introduction
 
 **PostgreSQL**, often referred to as **Postgres**, has been in active development since 1989 and has evolved into one of the most robust relational database management systems available today. Known for its **ACID compliance** (Atomicity, Consistency, Isolation, Durability), it ensures the reliability and integrity of your data. Its advanced features like **multi-version concurrency control (MVCC)**, **triggers**, **foreign keys**, and **stored procedures** make PostgreSQL a top choice for a wide range of applications, from small web apps to large enterprise systems.
 
-Whether you're a beginner or an experienced developer, this guide will walk you through the essentials of PostgreSQL, from installation to advanced database management techniques.
+Whether you're a beginner or an experienced developer, this guide **walks you through** the essentials of PostgreSQL, from installation to advanced database management techniques.
 
 ## Key Features
 
@@ -34,7 +33,7 @@ PostgreSQL offers numerous features that make it stand out as a leading database
 
 - **ACID Compliance**: Guarantees data reliability and consistency in all transactions.
 - **JSON Support**: Offers robust support for handling JSON data, allowing for hybrid relational/NoSQL models.
-- **High Performance**: Optimized for speed, handling complex queries efficiently, even under heavy load.
+- **High Performance & Scalability**: Optimized for speed, handling complex queries efficiently, even under heavy load.
 - **Security**: Provides secure authentication methods, encryption, and access control for data protection.
 - **Open Source**: Free to use, modify, and distribute under the PostgreSQL license.
 - **Replication & Clustering**: Supports replication for high availability and horizontal scaling.
@@ -49,7 +48,7 @@ PostgreSQL offers numerous features that make it stand out as a leading database
 
 🟢 **Absolute Beginner** (8-12 hours)
 - Start with [Installation](psql/installation.md)
-- Learn [Basic Queries](psql/query.md) 
+- Learn [Basic Queries](psql/query.md)
 - Practice with [Beginner Exercises](exercises/beginner-exercises.md)
 
 🟡 **Some SQL Experience** (12-16 hours)  
@@ -101,4 +100,3 @@ This project is licensed under the [MIT License](LICENSE), allowing you the free
 ## Acknowledgements
 
 This documentation was created with assistance from tools like **ChatGPT**, **Google Bard**, and various online resources. For more details, see the [declaration page](declaration.md).
-
