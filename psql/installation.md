@@ -48,4 +48,37 @@
 
 4. Optionally, you can secure your PostgreSQL installation by setting a password for the database superuser account (`postgres`).
 
+### Docker 
+
+1. The prerequsite for this is installation of the docker containerzation tool docker 
+
+2. Check the version of the docker tool
+   ```
+      docker --version 
+   ```
+
+3. Pull the offical postgreSql image
+   ```
+      docker pull postgres
+   ```
+
+4. Start a postgresSql container
+    ```
+      docker run --name my-postgres -e POSTGRES_PASSWORD=mysecretpassword -d postgres
+    ```
+     - Replace the `mysecretpassword` with your desired password
+     - This starts a container named my-postgres in the background
+
+5. Enter the postgresSql shell inside the container(only while running)
+    ```
+      docker exec -it my-postgres psql -U postgres
+    ```
+    - This opens the interative psql shell as the postgres user
+
+6.  To stop and remove the container when done
+    ```
+      docker stop my-postgres
+      docker rm my-postgres
+    ```
+
 ---
