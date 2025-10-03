@@ -57,7 +57,7 @@ CREATE TABLE example_table (
 );
 ```
 
-Constraints can be defined when a table is created or added later using the ALTER TABLE statement. Constraints can also be dropped using tthe ALTER TABLE statement.
+Constraints can be defined when a table is created or added later using the ALTER TABLE statement. Constraints can also be dropped using the ALTER TABLE statement.
 
 ## Joins
 
@@ -198,25 +198,48 @@ In the above syntax, the trigger function trigger_function_name is created using
 
 Example:
 ```sql
--- Example of creating a trigger
+-- 1. Create target table
+CREATE TABLE target_table (
+    id SERIAL PRIMARY KEY,
+    name TEXT,
+    age INT
+);
+
+-- 2. Create audit table
+CREATE TABLE audit_table (
+    audit_id SERIAL PRIMARY KEY,
+    event_type TEXT NOT NULL,
+    event_time TIMESTAMP NOT NULL DEFAULT NOW(),
+    table_name TEXT NOT NULL,
+    old_data JSONB,
+    new_data JSONB
+);
+
+-- 3. Create trigger function
 CREATE OR REPLACE FUNCTION log_changes()
 RETURNS TRIGGER AS $$
 BEGIN
     IF TG_OP = 'INSERT' THEN
         INSERT INTO audit_table (event_type, event_time, table_name, new_data)
-        VALUES ('INSERT', NOW(), TG_TABLE_NAME, NEW);
+        VALUES ('INSERT', NOW(), TG_TABLE_NAME, to_jsonb(NEW));
+        RETURN NEW;
+
     ELSIF TG_OP = 'UPDATE' THEN
         INSERT INTO audit_table (event_type, event_time, table_name, old_data, new_data)
-        VALUES ('UPDATE', NOW(), TG_TABLE_NAME, OLD, NEW);
+        VALUES ('UPDATE', NOW(), TG_TABLE_NAME, to_jsonb(OLD), to_jsonb(NEW));
+        RETURN NEW;
+
     ELSIF TG_OP = 'DELETE' THEN
         INSERT INTO audit_table (event_type, event_time, table_name, old_data)
-        VALUES ('DELETE', NOW(), TG_TABLE_NAME, OLD);
+        VALUES ('DELETE', NOW(), TG_TABLE_NAME, to_jsonb(OLD));
+        RETURN OLD;
     END IF;
 
-    RETURN NEW;
+    RETURN NULL;
 END;
 $$ LANGUAGE plpgsql;
 
+-- 4. Attach trigger to target table
 CREATE TRIGGER audit_trigger
 AFTER INSERT OR UPDATE OR DELETE
 ON target_table
