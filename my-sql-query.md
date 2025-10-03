@@ -1,42 +1,42 @@
 ```sql
 -- Create a table named department
 CREATE TABLE department (
-    dept_name VARCHAR(100),
+    dept_name VARCHAR(100) PRIMARY KEY,
     building VARCHAR(120) NOT NULL,
-    budget NUMERIC(12,2) NOT NULL DEFAULT 'undecided',
-    num_staff INT,
-    PRIMARY KEY (dept_name)
+    budget NUMERIC(12,2) NOT NULL DEFAULT 0.00,
+    num_staff INT
 );
 
 -- Insert values into the department table
+-- Removed duplicates because dept_name is a PRIMARY KEY
 INSERT INTO department (dept_name, building, budget, num_staff)
-VALUES ('cse', 'ma wazed', 12.20, 10),
-       ('cse', 'ma wazed', 12.20, 10),
-       ('cse', 'ma wazed', 12.20, 10);
+VALUES ('cse', 'ma wazed', 12.20, 10);
 
 -- Add a column named dept_code to the existing department table
-ALTER TABLE department ADD dept_code VARCHAR(6) NOT NULL;
+ALTER TABLE department ADD COLUMN dept_code VARCHAR(6) NOT NULL DEFAULT 'NA';
 
--- Add a column named dep_code to the existing department table after the dept_name column
-ALTER TABLE department ADD dep_code VARCHAR(6) NOT NULL AFTER dept_name;
+-- Add a column named dep_code to the existing department table
+-- PostgreSQL does not support 'AFTER', so we just add it
+ALTER TABLE department ADD COLUMN dep_code VARCHAR(6) NOT NULL DEFAULT 'NA';
 
 -- Remove the dept_code column from the department table
 ALTER TABLE department DROP COLUMN dept_code;
 
--- Modify the data type of the dept_code column to VARCHAR(10) in the department table
-ALTER TABLE department MODIFY COLUMN dept_code VARCHAR(10);
-
--- Delete the department table along with its structure
-DROP TABLE department;
+-- Modify the data type of the dep_code column to VARCHAR(10) in the department table
+ALTER TABLE department ALTER COLUMN dep_code TYPE VARCHAR(10);
 
 -- Delete all data from the department table, keeping the table structure
 DELETE FROM department;
 -- OR
 TRUNCATE department;
 
+-- Delete the department table along with its structure
+DROP TABLE department;
+
 -- Insert values into a table (TABLE2) from another table (TABLE1) based on a condition
+-- Replace CONDITION with an actual condition
 INSERT INTO TABLE2 (employeeId, employeeName)
-SELECT id, firstName FROM TABLE1 WHERE CONDITION;
+SELECT id, firstName FROM TABLE1 WHERE 1=1;
 
 -- Update the salary column of the instructor table by increasing it by 5% for instructors with salary below the average salary
 UPDATE instructor
@@ -63,7 +63,7 @@ LIMIT n;
 -- Retrieve a limited number of rows from a table, starting from the mth row
 SELECT *
 FROM TABLE_NAME
-LIMIT m, n;
+LIMIT n OFFSET m;
 
 -- Retrieve records from the instructor table where the name is not 'pranto' or 'Zahid'
 SELECT *
@@ -113,10 +113,11 @@ SELECT dept_name, COUNT(id) AS num_of_teacher
 FROM instructor
 GROUP BY dept_name;
 
--- Perform a natural join between the employee and branch tables
+-- Perform a join between the employee and branch tables
+-- Replaced [LEFT|RIGHT] with LEFT JOIN
 SELECT branch_name, first_name, last_name
 FROM employee
-[LEFT|RIGHT] JOIN branch
+LEFT JOIN branch
 ON employee.emp_id = branch.mgr_id;
 
 -- Perform a nested query to retrieve employee names based on their IDs in the works_with table
@@ -129,33 +130,38 @@ WHERE employee.emp_id IN (
 );
 
 -- Create a trigger that inserts values into another table when a new row is inserted into table1
-DELIMITER |
-CREATE OR REPLACE TRIGGER triggertest
-BEFORE INSERT 
-ON table1
-FOR EACH ROW 
+CREATE OR REPLACE FUNCTION triggertest_func()
+RETURNS TRIGGER AS $$
 BEGIN
     INSERT INTO table2 VALUES (NEW.id, NEW.name);
+    RETURN NEW;
 END;
-|
-DELIMITER ;
+$$ LANGUAGE plpgsql;
+
+CREATE TRIGGER my_trigger1
+BEFORE INSERT ON table1
+FOR EACH ROW
+EXECUTE FUNCTION triggertest_func();
 
 -- Create a trigger with conditional statements that inserts values into another table based on the sex column in the employee table
-DELIMITER |
-CREATE TRIGGER my_trigger BEFORE INSERT
-ON employee
-FOR EACH ROW
+CREATE OR REPLACE FUNCTION my_trigger_func()
+RETURNS TRIGGER AS $$
 BEGIN
     IF NEW.sex = 'M' THEN
         INSERT INTO trigger_test VALUES ('added male employee');
-    ELSEIF NEW.sex = 'F' THEN
+    ELSIF NEW.sex = 'F' THEN
         INSERT INTO trigger_test VALUES ('added female');
     ELSE
         INSERT INTO trigger_test VALUES ('added other employee');
     END IF;
+    RETURN NEW;
 END;
-|
-DELIMITER ;
+$$ LANGUAGE plpgsql;
+
+CREATE TRIGGER my_trigger2
+BEFORE INSERT ON employee
+FOR EACH ROW
+EXECUTE FUNCTION my_trigger_func();
 
 -- Example of a complex query involving multiple tables and joins
 SELECT t.eName
@@ -168,5 +174,3 @@ INNER JOIN employee AS e
 ON t.mName = e.eName
 AND t.city = e.city
 AND t.street = e.street;
-
-```
