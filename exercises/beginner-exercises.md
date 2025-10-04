@@ -275,4 +275,86 @@ DROP TABLE employees;
 ```
 
 ---
+## 31. What is the difference between SERIAL and BIGSERIAL?
+**Answer:**
+SERIAL: Auto-incrementing integer (4 bytes), range up to ~2 billion.
+BIGSERIAL: Auto-incrementing big integer (8 bytes), range up to ~9 quintillion.
+
+---
+## 32. How do you create a foreign key?
+**Answer:**
+```sql
+CREATE TABLE orders (
+    id SERIAL PRIMARY KEY,
+    customer_id INT REFERENCES customers(id),
+    order_date DATE
+);
+```
+
+---
+## 33. How do you limit the number of rows returned?
+**Answer:**
+```sql
+SELECT * FROM employees LIMIT 5;
+```
+
+---
+## 34. How do you skip rows using OFFSET?
+**Answer:**
+```sql
+SELECT * FROM employees
+LIMIT 5 OFFSET 10;
+```
+
+---
+## 35. How do you combine results from two queries?
+**Answer:**
+```sql
+SELECT name FROM employees
+UNION
+SELECT name FROM managers;
+```
+
+---
+## 36. How do you check the structure of a table?
+**Answer:**
+```sql
+\d employees
+```
+
+---
+## 37. How do you find the current database?
+**Answer:**
+```sql
+SELECT current_database();
+```
+
+---
+## 38. How do you find the current user?
+**Answer:**
+```sql
+SELECT current_user;
+```
+
+---
+## 39. How do you concatenate strings?
+**Answer:**
+```sql
+SELECT first_name || ' ' || last_name AS full_name
+FROM employees;
+```
+
+---
+## 40. How do you use CASE statements in queries?
+**Answer:**
+```sql
+SELECT name,
+       CASE 
+           WHEN age < 30 THEN 'Young'
+           ELSE 'Experienced'
+       END AS age_group
+FROM employees;
+```
+
+---
 
