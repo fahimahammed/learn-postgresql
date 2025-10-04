@@ -1,0 +1,16 @@
+/* Example styling for branding */
+body::before {
+  content: "Learn PostgreSQL";
+  display: block;
+  text-align: center;
+  font-size: 1.2rem;
+  font-weight: bold;
+  padding: 10px;
+  background-color: #3F51B5;
+  color: white;
+}
+
+a[href$=".pdf"] {
+  color: #ff5722;
+  font-weight: bold;
+}
