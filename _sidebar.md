@@ -21,3 +21,4 @@
   * [psql-query](psql-query.md)
 * **Exercises**
   * [Beginner Exercises](exercises/beginner-exercises.md)
+  * [Intermediate Exercises](exercises/intermediate-exercises.md)
