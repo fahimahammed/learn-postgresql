@@ -6,11 +6,49 @@ body::before {
   font-size: 1.2rem;
   font-weight: bold;
   padding: 10px;
-  background-color: #3F51B5;
+  background-color: #3f51b5;
   color: white;
 }
 
 a[href$=".pdf"] {
   color: #ff5722;
   font-weight: bold;
+}
+
+/* Back-to-Top Button */
+.back-to-top {
+  position: fixed;
+  right: 20px;
+  bottom: 24px;
+  width: 50px;
+  height: 50px;
+  border-radius: 20%;
+  border: none;
+  background: #3f51b5;
+  color: #fff;
+  font-size: 22px;
+  cursor: pointer;
+  opacity: 0;
+  transform: translateY(10px);
+  transition: opacity 0.3s ease, transform 0.3s ease, background 0.3s ease;
+  z-index: 9999;
+  display: none; /* hidden by default */
+  align-items: center;
+  justify-content: center;
+}
+
+.back-to-top:hover,
+.back-to-top:focus {
+  background: #303f9f;
+  outline: none;
+}
+
+.back-to-top:active {
+  transform: translateY(1px);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .back-to-top {
+    transition: none;
+  }
 }
