@@ -744,4 +744,268 @@ HAVING COUNT(DISTINCT DATE_TRUNC('month', order_date)) >= 10;
 * `HAVING` filters only customers active in 10+ months.
 * Useful for VIP programs or retention campaigns.
 
+---
 
+## 31. Scenario: Employee Hierarchy with Recursion 
+
+**Context:**
+The HR department wants to list all employees under a particular manager, including indirect reports. The employees table contains `employee_id`, `name`, and `manager_id`.
+
+**Question:**
+Write a query to find all employees reporting (directly or indirectly) to manager_id = 1.  
+
+**Answer:**
+```
+WITH RECURSIVE subordinates AS (
+    SELECT employee_id, name, manager_id
+    FROM employees
+    WHERE manager_id = 1
+  UNION ALL
+    SELECT e.employee_id, e.name, e.manager_id
+    FROM employees e
+    INNER JOIN subordinates s ON e.manager_id = s.employee_id
+)
+SELECT * FROM subordinates;
+```
+
+**Explanation:**
+* Recursive CTE subordinates finds direct reports first.
+* UNION ALL recursively adds indirect reports.
+* Useful for building organizational hierarchies.
+
+---
+
+## 32. Scenario: Top 3 Products per Category
+
+**Context:**
+Marketing wants to know the top-selling products in each category. The orders table contains product_id, quantity, and price. The products table contains product_id and category.
+
+**Question:**
+Write a query to find the top 3 products by revenue in each category.
+**Answer:**
+```
+SELECT category, product_id, total_revenue
+FROM (
+    SELECT p.category, o.product_id, SUM(o.quantity * o.price) AS total_revenue,
+           RANK() OVER (PARTITION BY p.category ORDER BY SUM(o.quantity * o.price) DESC) AS rnk
+    FROM orders o
+    JOIN products p ON o.product_id = p.product_id
+    GROUP BY p.category, o.product_id
+) t
+WHERE rnk <= 3;
+
+```
+
+**Explanation:**
+* Uses window function RANK() partitioned by category.
+* Aggregates revenue per product.
+* Filters top 3 per category with WHERE rnk <= 3.
+
+---
+
+## 33. Scenario: JSONB Nested Filtering
+
+**Context:**
+The user table stores preferences in a JSONB column preferences. Each JSON object contains keys like "notifications": {"email": true, "sms": false}.
+
+**Question:**
+Write a query to find all users who have email notifications enabled.
+
+**Answer:**
+```
+SELECT user_id, preferences
+FROM users
+WHERE preferences -> 'notifications' ->> 'email' = 'true';
+
+```
+
+**Explanation:**
+* Navigates nested JSONB with -> and ->>.
+* Filters only users with email notifications enabled.
+
+---
+
+## 34. Scenario: Lateral Join for Latest Order per Customer
+
+**Context:**
+The sales team wants each customer’s latest order. The customers table has customer_id. The orders table has order_id, customer_id, and order_date.
+
+
+**Question:**
+Write a query to retrieve each customer and their most recent order
+
+**Answer:**
+```
+SELECT c.customer_id, o.order_id, o.order_date
+FROM customers c
+LEFT JOIN LATERAL (
+    SELECT order_id, order_date
+    FROM orders
+    WHERE customer_id = c.customer_id
+    ORDER BY order_date DESC
+    LIMIT 1
+) o ON true;
+
+```
+
+**Explanation:**
+* LATERAL allows referencing the outer query row.
+* Retrieves the latest order per customer efficiently.
+
+---
+
+## 35. Scenario: Full-Text Search with Ranking
+
+**Context:**
+A blog wants to rank articles by relevance to the term "PostgreSQL optimization". The articles table has title and content.
+
+**Question:**
+Write a query to rank articles using full-text search.
+
+**Answer:**
+```
+SELECT title, ts_rank_cd(to_tsvector(content), to_tsquery('PostgreSQL & optimization')) AS rank
+FROM articles
+WHERE to_tsvector(content) @@ to_tsquery('PostgreSQL & optimization')
+ORDER BY rank DESC;
+
+```
+
+**Explanation:**
+* ts_rank_cd ranks matches by relevance.
+* @@ filters only relevant rows.
+* Useful for search results sorted by importance.
+
+---
+
+## 36. Scenario: Materialized View for Monthly Sales
+
+**Context:**
+Finance wants a precomputed table of monthly sales totals for faster reporting. Orders table has order_date and total_amount.
+
+**Question:**
+Write commands to create a materialized view and refresh it.
+
+**Answer:**
+```
+CREATE MATERIALIZED VIEW monthly_sales AS
+SELECT DATE_TRUNC('month', order_date) AS month, SUM(total_amount) AS total_sales
+FROM orders
+GROUP BY month;
+
+-- Refresh when data changes
+REFRESH MATERIALIZED VIEW monthly_sales;
+
+```
+
+**Explanation:**
+* Materialized view stores query results physically.
+* Refresh updates data periodically.
+* Speeds up repeated heavy queries.
+
+---
+
+## 37. Scenario: Transaction Isolation Test
+
+**Context:**
+The bank wants to test how SERIALIZABLE isolation prevents lost updates. The accounts table has account_id and balance.
+
+**Question:**
+Demonstrate a transaction that safely increments an account balance by 100.
+
+**Answer:**
+```
+BEGIN TRANSACTION ISOLATION LEVEL SERIALIZABLE;
+
+UPDATE accounts
+SET balance = balance + 100
+WHERE account_id = 1;
+
+COMMIT;
+
+```
+
+**Explanation:**
+* SERIALIZABLE prevents conflicts with concurrent transactions.
+* Ensures consistency in highly concurrent environments.
+
+---
+
+## 38. Scenario: Partitioned Table Query
+
+**Context:**
+A log system stores millions of rows in a logs table partitioned by month. Each partition is named logs_YYYY_MM.
+
+**Question:**
+Write a query to retrieve all logs from October 2025.
+
+**Answer:**
+```
+SELECT *
+FROM logs
+WHERE log_date >= '2025-10-01' AND log_date < '2025-11-01';
+
+```
+
+**Explanation:**
+* Partitioning ensures query only scans relevant data.
+* Improves performance on large tables.
+
+---
+
+## 39. Scenario: Array Aggregation
+
+**Context:**
+Marketing wants a list of all products each customer purchased. Orders table has customer_id and product_id.
+
+**Question:**
+Write a query to return each customer with an array of product_ids
+
+**Answer:**
+```
+SELECT customer_id, ARRAY_AGG(product_id) AS products
+FROM orders
+GROUP BY customer_id;
+
+```
+
+**Explanation:**
+* ARRAY_AGG aggregates multiple rows into an array per group.
+* Useful for reporting or exporting data in structured form.
+
+---
+
+## 40. Scenario: Combined Advanced Query
+
+**Context:**
+A platform wants VIP customers (spent > $10k last year) and their top 3 most purchased products. Orders table has customer_id, product_id, and total_amount.
+
+**Question:**
+Write a query combining aggregation, ranking, and filtering.
+
+**Answer:**
+```
+WITH vip AS (
+    SELECT customer_id
+    FROM orders
+    WHERE order_date >= CURRENT_DATE - INTERVAL '1 year'
+    GROUP BY customer_id
+    HAVING SUM(total_amount) > 10000
+),
+product_ranks AS (
+    SELECT customer_id, product_id, COUNT(*) AS qty,
+           RANK() OVER (PARTITION BY customer_id ORDER BY COUNT(*) DESC) AS rnk
+    FROM orders
+    WHERE customer_id IN (SELECT customer_id FROM vip)
+    GROUP BY customer_id, product_id
+)
+SELECT customer_id, product_id, qty
+FROM product_ranks
+WHERE rnk <= 3;
+
+```
+
+**Explanation:**
+* CTE vip filters high-value customers.
+* Window function ranks products per customer.
+* Combines multiple advanced features in a single query.
