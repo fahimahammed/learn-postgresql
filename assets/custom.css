@@ -1,45 +1,87 @@
-/* Example styling for branding */
+/* --- Global Typography & Background --- */
+body {
+  margin: 0;
+  font-family: "Inter", "Segoe UI", sans-serif;
+  background: linear-gradient(135deg, #e3f2fd 0%, #ede7f6 40%, #f3e5f5 100%);
+  background-attachment: fixed;
+  color: #222;
+  transition: background 0.6s ease;
+  min-height: 100vh;
+}
+
+/* Optional: add a slight overlay for a subtle frosted effect */
+body::after {
+  content: "";
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: radial-gradient(
+    circle at top left,
+    rgba(63, 81, 181, 0.08),
+    rgba(103, 58, 183, 0.08)
+  );
+  pointer-events: none;
+  z-index: -1;
+}
+
+/* --- Header Banner (Branding) --- */
 body::before {
-  content: "Learn PostgreSQL";
+  content: " Learn PostgreSQL";
   display: block;
   text-align: center;
-  font-size: 1.2rem;
-  font-weight: bold;
-  padding: 10px;
-  background-color: #3f51b5;
-  color: white;
+  font-size: 1.25rem;
+  font-weight: 600;
+  letter-spacing: 0.5px;
+  padding: 12px;
+  background: linear-gradient(90deg, #3f51b5, #5c6bc0, #7e57c2);
+  color: #fff;
+  box-shadow: 0 2px 6px rgba(63, 81, 181, 0.3);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.2);
 }
 
+/* --- PDF Link Highlight --- */
 a[href$=".pdf"] {
   color: #ff5722;
-  font-weight: bold;
+  font-weight: 600;
+  text-decoration: underline dotted;
+  transition: color 0.3s ease;
 }
 
-/* Back-to-Top Button */
+a[href$=".pdf"]:hover {
+  color: #e64a19;
+  text-decoration: underline solid;
+}
+
+/* --- Back-to-Top Button --- */
 .back-to-top {
   position: fixed;
   right: 20px;
   bottom: 24px;
-  width: 50px;
-  height: 50px;
-  border-radius: 20%;
+  width: 52px;
+  height: 52px;
+  border-radius: 50%;
   border: none;
-  background: #3f51b5;
+  background: linear-gradient(145deg, #3f51b5, #5c6bc0);
+  box-shadow: 0 6px 14px rgba(63, 81, 181, 0.3);
   color: #fff;
-  font-size: 22px;
+  font-size: 24px;
   cursor: pointer;
   opacity: 0;
   transform: translateY(10px);
-  transition: opacity 0.3s ease, transform 0.3s ease, background 0.3s ease;
+  transition: opacity 0.4s ease, transform 0.3s ease, box-shadow 0.3s ease, background 0.3s ease;
   z-index: 9999;
-  display: none; /* hidden by default */
+  display: flex;
   align-items: center;
   justify-content: center;
 }
 
 .back-to-top:hover,
 .back-to-top:focus {
-  background: #303f9f;
+  background: linear-gradient(145deg, #303f9f, #512da8);
+  box-shadow: 0 8px 18px rgba(63, 81, 181, 0.4);
+  transform: translateY(-3px);
   outline: none;
 }
 
@@ -47,8 +89,50 @@ a[href$=".pdf"] {
   transform: translateY(1px);
 }
 
+/* --- Docsify Content Area --- */
+#app {
+  padding-top: 10px;
+}
+
+.markdown-section h1,
+.markdown-section h2,
+.markdown-section h3 {
+  color: #3f51b5;
+  font-weight: 600;
+}
+
+.markdown-section a {
+  color: #3949ab;
+  text-decoration: none;
+  transition: color 0.3s ease;
+}
+
+.markdown-section a:hover {
+  color: #1a237e;
+  text-decoration: underline;
+}
+
+/* --- Reduced Motion Accessibility --- */
 @media (prefers-reduced-motion: reduce) {
   .back-to-top {
     transition: none;
   }
+}
+
+/* --- Smooth Scroll --- */
+html {
+  scroll-behavior: smooth;
+}
+
+/* --- Vertical Border Before Each Heading --- */
+.markdown-section h1,
+.markdown-section h2,
+.markdown-section h3 {
+  border-left: 4px solid #7e57c2; /* purple vertical line */
+  padding-left: 12px;             /* space between border and text */
+  margin-left: 0;
+  color: #3f51b5;                 /* main heading color */
+  font-weight: 600;
+  line-height: 1.4;
+  margin-top: 1.5em;
 }
